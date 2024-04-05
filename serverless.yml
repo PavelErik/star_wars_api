@@ -1,0 +1,106 @@
+service: serverless-star-wars-app
+
+useDotenv: true
+
+plugins:
+  - serverless-dynamodb
+  - serverless-esbuild
+  - serverless-offline
+  - serverless-auto-swagger
+  - serverless-plugin-optimize
+
+provider:
+  name: aws
+  runtime: nodejs16.x
+  region: us-east-1
+  stage: ${opt:stage}
+  timeout: 30
+  environment:
+    STAGE: ${self:provider.stage}
+    aws_access_key_id: fake-key
+    aws_secret_access_key: fake-secret
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      Resource: 
+        - !Sub "arn:aws:dynamodb:us-east-1:*:table/People"
+        - !Sub "arn:aws:dynamodb:us-east-1:*:table/Planet"
+
+package:
+  individually: true
+  excludeDevDependencies: true
+  include:
+    - src/infraestructure/http/docs/**
+
+functions:
+  people-get:
+    handler: ./src/infraestructure/http/people/get.handler
+    events:
+      - httpApi:
+          path: /api/people/get/{id}
+          method: GET
+
+  planet-post:
+    handler: ./src/infraestructure/http/planet/post.handler
+    events:
+      - httpApi:
+          path: /api/planet/post
+          method: POST
+          bodyType: PlanetRequest
+
+resources:
+  Resources:
+    PeopleTable:
+      Type: "AWS::DynamoDB::Table"
+      Properties:
+        TableName: People
+        AttributeDefinitions:
+          - AttributeName: "id"
+            AttributeType: "N"
+        KeySchema:
+          - AttributeName: "id"
+            KeyType: "HASH"
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+    PlanetTable:
+      Type: "AWS::DynamoDB::Table"
+      Properties:
+        TableName: Planet
+        AttributeDefinitions:
+          - AttributeName: "id"
+            AttributeType: "S"
+        KeySchema:
+          - AttributeName: "id"
+            KeyType: "HASH"
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+
+custom:
+  customVariable1: Hello, World!
+  dynamodb:
+    stages:
+      - ${opt:stage}
+    start:
+      port: 8000
+      heapInitial: 200m
+      heapMax: 1g
+      inMemory: true
+      migrate: true
+      seed: true
+      convertEmptyValues: true
+      noStart: false
+  optimize:
+    external: ["swagger-ui-dist"]
+  serverlessAutoSwagger:
+    version: '1.0.0'
+    title: 'Mi API'
+    description: 'Documentación de mi API'
+    models: []

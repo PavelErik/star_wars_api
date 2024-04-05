@@ -1,0 +1,42 @@
+{
+  "name": "star-wars-app",
+  "version": "1.0.0",
+  "description": "Api para exposicion de datos",
+  "main": "app.ts",
+  "scripts": {
+    "start": "serverless offline start -s dev --verbose",
+    "deploy": "serverless deploy --aws-profile creadential-pavel  -s dev --region us-east-1 --verbose ",
+    "remove": "serverless remove --aws-profile creadential-pavel  -s dev --region us-east-1 --verbose ",
+    "test": "jest --coverage"
+  },
+  "author": "Pavel Erikson",
+  "license": "ISC",
+  "devDependencies": {
+    "@serverless/typescript": "^3.2.1",
+    "@types/aws-lambda": "^8.10.119",
+    "@types/jest": "^29.5.12",
+    "@types/node": "^18.0.0",
+    "@types/swagger-ui-dist": "^3.30.4",
+    "@types/uuid": "^9.0.8",
+    "@types/yamljs": "^0.2.34",
+    "esbuild": "^0.17.19",
+    "glob": "^10.3.3",
+    "jest": "^29.7.0",
+    "serverless": "^3.21.0",
+    "serverless-auto-swagger": "^2.12.0",
+    "serverless-esbuild": "^1.46.0",
+    "serverless-offline": "^8.8.0",
+    "serverless-plugin-optimize": "^4.2.1-rc.1",
+    "ts-jest": "^29.1.2",
+    "tsx": "^3.12.7",
+    "typescript": "^5.1.6"
+  },
+  "dependencies": {
+    "aws-dynamodb-local": "^0.0.11",
+    "aws-sdk": "^2.1591.0",
+    "serverless-dynamodb": "^0.2.51",
+    "swagger-ui-dist": "^5.13.0",
+    "uuid": "^9.0.1",
+    "yamljs": "^0.3.0"
+  }
+}
